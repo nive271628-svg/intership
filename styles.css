@@ -428,8 +428,8 @@ select.form-control { padding-left: 16px; }
 .home-msme-img { height: 52px; width: auto; object-fit: contain; background: #fff; border-radius: 8px; padding: 4px 8px; }
 
 /* STATS */
-.home-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 40px 60px; max-width: 900px; margin: 0 auto; }
-.home-stat { background: rgba(13,30,53,0.55); border: 1px solid rgba(30,115,230,0.18); border-radius: 22px; padding: 28px 24px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; transition: border-color 0.3s, box-shadow 0.3s; backdrop-filter: blur(16px); }
+.home-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 40px 60px; }
+.home-stat { background: rgba(13,30,53,0.55); border: 1px solid rgba(30,115,230,0.18); border-radius: 22px; padding: 28px 24px; display: flex; flex-direction: column; gap: 6px; transition: border-color 0.3s, box-shadow 0.3s; backdrop-filter: blur(16px); }
 .home-stat:hover { border-color: rgba(30,115,230,0.45); box-shadow: 0 0 22px rgba(30,115,230,0.15); }
 .home-stat-num { font-size: 38px; font-weight: 900; color: #f1f5f9; }
 .home-stat-num sup { font-size: 24px; color: #60a5fa; }
@@ -622,13 +622,13 @@ select.form-control { padding-left: 16px; }
   .home-float { display: none; }
   .home-hero-right { min-height: 280px; }
   .home-msme { margin: 0 24px 10px; flex-direction: column; }
-  .home-stats { grid-template-columns: repeat(3,1fr); padding: 24px; }
+  .home-stats { grid-template-columns: repeat(2,1fr); padding: 24px; }
   .home-section { padding: 40px 24px; }
   .home-why { grid-template-columns: 1fr; }
   .home-footer { padding: 20px 24px; flex-direction: column; text-align: center; }
 }
 @media (max-width: 600px) {
-  .home-stats { grid-template-columns: 1fr 1fr 1fr; }
+  .home-stats { grid-template-columns: 1fr 1fr; }
   .home-contact { grid-template-columns: 1fr; }
 }
 
@@ -902,7 +902,7 @@ select.form-control { padding-left: 16px; }
     align-items: center;
   }
   .home-stats {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     padding: 24px 16px;
   }
   .home-section {
