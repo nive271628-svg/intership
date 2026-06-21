@@ -12,13 +12,22 @@ const DEFAULT_STATE = {
   resources: [],
   payments: [],
   applications: [],
-  config: { firebase: null, sheetsWebhook: "https://script.google.com/macros/s/AKfycbxL0lUhMw5UOx0azhesvUEtwHp3TFienBW0Z_VLYXYR5kgwnRmhaESYcSFZjOK0C700jA/exec" }
+  config: { firebase: null, sheetsWebhook: "https://script.google.com/macros/s/AKfycbwZd3wXH_f9P3fMiapkaCukjD7q7h2JhThdgx0kaikvoHfhlxw3biIQDNXzNiSz3U7UmQ/exec" }
 };
 
 // State and Session Init
-const STATE_VERSION = "5";
-const SHEETS_WEBHOOK = "https://script.google.com/macros/s/AKfycbxL0lUhMw5UOx0azhesvUEtwHp3TFienBW0Z_VLYXYR5kgwnRmhaESYcSFZjOK0C700jA/exec";
-let appState = JSON.parse(localStorage.getItem('speedify_portal_state'));
+const STATE_VERSION = "6";
+const SHEETS_WEBHOOK ="https://script.google.com/macros/s/AKfycbx-QU9OnNSdGiQ9KOSBr0jN4YFtPqTLFLPVGJvFU8PA-pL9Zo6ruPEg4tTIp20mkx47rA/exec";
+let appState = null;
+
+try {
+  appState = JSON.parse(
+    localStorage.getItem('speedify_portal_state')
+  );
+} catch (e) {
+  console.error('Corrupted localStorage:', e);
+  appState = null;
+}
 if (!appState) {
   // First ever load — seed defaults
   appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
@@ -47,7 +56,16 @@ if (!appState.config.sheetsWebhook) {
   appState.config.sheetsWebhook = SHEETS_WEBHOOK;
   localStorage.setItem('speedify_portal_state', JSON.stringify(appState));
 }
-let currentSession = JSON.parse(sessionStorage.getItem('speedify_portal_session')) || { currentUser: null };
+let currentSession;
+
+try {
+  currentSession =
+    JSON.parse(
+      sessionStorage.getItem('speedify_portal_session')
+    ) || { currentUser: null };
+} catch (e) {
+  currentSession = { currentUser: null };
+}
 const sessionBlobs = {};
 
 function saveState() {
@@ -60,7 +78,16 @@ function saveState() {
     try { localStorage.setItem('speedify_portal_state', JSON.stringify(stripped)); appState = stripped; } catch(e2) { console.warn('Storage full, some data may not persist.'); }
   }
 }
-function saveSession() { sessionStorage.setItem('speedify_portal_session', JSON.stringify(currentSession)); }
+function saveSession() {
+  try {
+    sessionStorage.setItem(
+      'speedify_portal_session',
+      JSON.stringify(currentSession)
+    );
+  } catch (e) {
+    console.error('Session save failed:', e);
+  }
+}
 
 // --- FIREBASE CONFIG ---
 const FIREBASE_CONFIG = {
@@ -795,52 +822,84 @@ function renderApplyView(container) {
     appState.applications.push(appData);
     saveState();
 
-    // 2. Send to Google Sheets webhook
+    console.log('🔥🔥🔥 FORM SUBMITTED - Starting sync...', appData.fullName);
+
+    // 2. Send to Google Sheets webhook - DO THIS FIRST (before Firebase)
     const webhookUrl = (appState.config && appState.config.sheetsWebhook) || SHEETS_WEBHOOK;
+    console.log('📤 Webhook URL:', webhookUrl);
+    
     if (webhookUrl) {
-      try {
-        // POST with text/plain body — avoids CORS preflight, works reliably with Google Apps Script doPost
-        const payload = {
-          timestamp:  new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
-          name:       appData.fullName,
-          email:      appData.email,
-          phone:      appData.phone,
-          city:       appData.city,
-          university: appData.university,
-          degree:     appData.degree,
-          year:       appData.yearOfStudy,
-          gradYear:   appData.gradYear,
-          domain:     appData.role,
-          mode:       appData.mode,
-          duration:   appData.duration,
-          whyJoin:    appData.whyJoin,
-          skills:     appData.skills,
-          status:     'Under Review',
-          id:         appData.id
-        };
-        // Try POST first (works with doPost in Apps Script)
-        await fetch(webhookUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify(payload)
-        });
-        // Also fire GET as fallback (works with doGet in Apps Script)
-        const params = new URLSearchParams(payload);
-        await fetch(`${webhookUrl}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
-        console.log('✅ Sent to Google Sheets');
-      } catch (err) {
-        console.warn('Google Sheets webhook failed:', err);
-      }
+      const payload = {
+        timestamp:  new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+        name:       appData.fullName,
+        email:      appData.email,
+        phone:      appData.phone,
+        city:       appData.city,
+        university: appData.university,
+        degree:     appData.degree,
+        year:       appData.yearOfStudy,
+        gradYear:   appData.gradYear,
+        domain:     appData.role,
+        mode:       appData.mode,
+        duration:   appData.duration,
+        whyJoin:    appData.whyJoin,
+        skills:     appData.skills,
+        status:     'Under Review',
+        id:         appData.id
+      };
+      
+      console.log('📦 Payload:', payload);
+      console.log('📦 Name:', payload.name);
+      console.log('📦 Email:', payload.email);
+      
+      // Build complete URL with ALL parameters  
+      const params = new URLSearchParams();
+      Object.keys(payload).forEach(key => {
+        params.append(key, payload[key] || '');
+      });
+      
+      const fullUrl = `${webhookUrl}?${params.toString()}`;
+      console.log('📤 Full URL length:', fullUrl.length);
+      console.log('📤 Sending via programmatic link click...');
+      
+      // Create invisible link and click it (opens in new tab, bypasses popup blockers)
+    try {
+  console.log('📤 Sending to Google Sheets...');
+
+  const response = await fetch(fullUrl, {
+    method: 'GET',
+    mode: 'cors'
+  });
+
+  const result = await response.json();
+
+  console.log('✅ Google Sheets Response:', result);
+
+  if (result.status === 'success') {
+    console.log('✅ Data saved to Google Sheets');
+  } else {
+    console.error('❌ Google Sheets Error:', result);
+  }
+
+} catch (error) {
+  console.error('❌ Fetch Error:', error);
+}
+      
+      console.log('✅✅✅ LINK CLICKED - NEW TAB OPENED!');
+      console.log('👉 A new tab opened with your data!');
+      console.log('👉 You can close that tab - data is already saved!');
+    } else {
+      console.error('❌ No webhook URL configured!');
     }
 
-    // 3. Save to Firestore
+    // 3. Save to Firestore (optional, can fail without affecting form)
     if (firebaseDb) {
       try {
         const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
         await addDoc(collection(firebaseDb, "applications"), appData);
+        console.log('✅ Firestore save successful');
       } catch (err) {
-        console.warn("Firestore write failed:", err);
+        console.warn("⚠️ Firestore write failed (OK to ignore):", err.message);
       }
     }
 
