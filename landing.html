@@ -9,9 +9,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="landing.css?v=2">
+  <link rel="stylesheet" href="landing.css?v=3">
 </head>
 <body>
+
+  <!-- Particle canvas background -->
+  <canvas id="particles-canvas"></canvas>
 
   <!-- NAVBAR -->
   <nav class="navbar">
@@ -24,12 +27,10 @@
         <a href="index.html#login" class="btn-nav-login">Login</a>
         <a href="index.html#apply" class="btn-nav-cta">Get Started <i class="fa-solid fa-arrow-right"></i></a>
       </div>
-      <!-- Mobile hamburger -->
       <button class="btn-mobile-nav" id="mobileNavBtn" aria-label="Toggle navigation">
         <i class="fa-solid fa-bars" id="mobileNavIcon"></i>
       </button>
     </div>
-    <!-- Mobile nav drawer -->
     <div class="nav-mobile-drawer" id="mobileNavDrawer">
       <a href="#">Home</a>
       <a href="#domains">Domains</a>
@@ -46,7 +47,7 @@
       <div class="hero-left">
         <div class="hero-badge"><i class="fa-solid fa-rocket"></i> Shape your future with us</div>
         <h1 class="hero-title">
-          Accelerate Your<br>Career<br>
+          <span class="hero-title-gradient">Accelerate Your Career</span><br>
           <span class="hero-title-accent">with Speedify Tech X</span>
         </h1>
         <p class="hero-desc">Step into the world of tech with our elite internship program. Gain real-world experience, build a stellar portfolio, and land your dream job.</p>
@@ -59,16 +60,74 @@
           <span><i class="fa-solid fa-circle-check"></i> Mentorship</span>
           <span><i class="fa-solid fa-circle-check"></i> Certification</span>
         </div>
-
       </div>
+
+      <!-- HERO RIGHT: 3D Dashboard Mockup -->
       <div class="hero-right">
-        <div class="hero-logo-ring">
-          <div class="ring-outer"></div>
-          <div class="hero-logo-card">
-            <img src="logo.jpeg" alt="Speedify Tech X Logo">
+        <div class="dashboard-mockup">
+          <div class="mockup-topbar">
+            <div class="mockup-dots">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <span class="mockup-title-bar">Intern Dashboard</span>
+            <div class="mockup-avatar"><i class="fa-solid fa-user"></i></div>
+          </div>
+          <div class="mockup-body">
+            <div class="mockup-stats-row">
+              <div class="mockup-stat-card">
+                <i class="fa-solid fa-chart-line mockup-stat-icon cyan-icon"></i>
+                <div>
+                  <div class="mockup-stat-val">95%</div>
+                  <div class="mockup-stat-label">Progress</div>
+                </div>
+              </div>
+              <div class="mockup-stat-card">
+                <i class="fa-solid fa-award mockup-stat-icon purple-icon"></i>
+                <div>
+                  <div class="mockup-stat-val">12</div>
+                  <div class="mockup-stat-label">Tasks Done</div>
+                </div>
+              </div>
+              <div class="mockup-stat-card">
+                <i class="fa-solid fa-clock mockup-stat-icon green-icon"></i>
+                <div>
+                  <div class="mockup-stat-val">32h</div>
+                  <div class="mockup-stat-label">Hours Logged</div>
+                </div>
+              </div>
+            </div>
+            <div class="mockup-progress-section">
+              <div class="mockup-progress-label">
+                <span>Web Development</span><span class="mockup-percent">78%</span>
+              </div>
+              <div class="mockup-progress-track"><div class="mockup-progress-fill" style="width:78%;background:linear-gradient(90deg,#38bdf8,#1a6fd4)"></div></div>
+              <div class="mockup-progress-label">
+                <span>React & Node.js</span><span class="mockup-percent">54%</span>
+              </div>
+              <div class="mockup-progress-track"><div class="mockup-progress-fill" style="width:54%;background:linear-gradient(90deg,#a78bfa,#7c3aed)"></div></div>
+              <div class="mockup-progress-label">
+                <span>UI/UX Design</span><span class="mockup-percent">91%</span>
+              </div>
+              <div class="mockup-progress-track"><div class="mockup-progress-fill" style="width:91%;background:linear-gradient(90deg,#34d399,#059669)"></div></div>
+            </div>
+            <div class="mockup-badges-row">
+              <span class="mockup-badge badge-blue"><i class="fa-solid fa-code"></i> Day 14</span>
+              <span class="mockup-badge badge-green"><i class="fa-solid fa-circle-check"></i> On Track</span>
+              <span class="mockup-badge badge-purple"><i class="fa-solid fa-star"></i> Top Intern</span>
+            </div>
           </div>
         </div>
-
+        <!-- Floating cards -->
+        <div class="hero-float hero-float-tl">
+          <i class="fa-solid fa-code-merge"></i>
+          <div><strong>Code Merged</strong><span>Just now</span></div>
+        </div>
+        <div class="hero-float hero-float-br">
+          <i class="fa-solid fa-certificate"></i>
+          <div><strong>Certified</strong><span>Top 1% Intern</span></div>
+        </div>
       </div>
     </div>
   </section>
@@ -90,10 +149,10 @@
   <section class="stats-section">
     <div class="container">
       <div class="stats-grid">
-        <div class="stat-card"><span class="stat-num">500<span class="stat-plus">+</span></span><span class="stat-label">Students Trained</span></div>
-        <div class="stat-card"><span class="stat-num">50<span class="stat-plus">+</span></span><span class="stat-label">Partner Companies</span></div>
-        <div class="stat-card"><span class="stat-num">95<span class="stat-plus">%</span></span><span class="stat-label">Placement Rate</span></div>
-        <div class="stat-card"><span class="stat-num">10<span class="stat-plus">+</span></span><span class="stat-label">Tech Domains</span></div>
+        <div class="stat-card glass-card"><span class="stat-num">10<span class="stat-plus">+</span></span><span class="stat-label">Students Trained</span></div>
+        <div class="stat-card glass-card"><span class="stat-num">50<span class="stat-plus">+</span></span><span class="stat-label">Partner Companies</span></div>
+        <div class="stat-card glass-card"><span class="stat-num">95<span class="stat-plus">%</span></span><span class="stat-label">Placement Rate</span></div>
+        <div class="stat-card glass-card"><span class="stat-num">10<span class="stat-plus">+</span></span><span class="stat-label">Tech Domains</span></div>
       </div>
     </div>
   </section>
@@ -102,14 +161,30 @@
   <section class="domains-section" id="domains">
     <div class="container">
       <div class="section-header">
-        <h2>Explore <span>Domains</span></h2>
+        <h2 class="section-title-gradient">Explore <span>Domains</span></h2>
         <p>Master the skills that matter. Choose a path and become an expert.</p>
       </div>
       <div class="domains-grid">
-        <div class="domain-card"><div class="domain-icon cyan"><i class="fa-solid fa-globe"></i></div><h3>Web Development</h3><p>HTML, CSS, JavaScript, React, Node.js</p></div>
-        <div class="domain-card"><div class="domain-icon blue"><i class="fa-solid fa-mobile-screen"></i></div><h3>App Development</h3><p>Flutter, React Native, Android, iOS</p></div>
-        <div class="domain-card"><div class="domain-icon purple"><i class="fa-solid fa-layer-group"></i></div><h3>Full Stack Development</h3><p>React, Node.js, Databases, REST APIs</p></div>
-        <div class="domain-card"><div class="domain-icon pink"><i class="fa-solid fa-palette"></i></div><h3>UI/UX Design</h3><p>Figma, Adobe XD, Wireframing, Prototyping</p></div>
+        <div class="domain-card glass-card">
+          <div class="domain-icon cyan"><i class="fa-solid fa-globe"></i></div>
+          <h3>Web Development</h3>
+          <p>HTML, CSS, JavaScript, React, Node.js</p>
+        </div>
+        <div class="domain-card glass-card">
+          <div class="domain-icon blue"><i class="fa-solid fa-mobile-screen"></i></div>
+          <h3>App Development</h3>
+          <p>Flutter, React Native, Android, iOS</p>
+        </div>
+        <div class="domain-card glass-card">
+          <div class="domain-icon purple"><i class="fa-solid fa-layer-group"></i></div>
+          <h3>Full Stack Development</h3>
+          <p>React, Node.js, Databases, REST APIs</p>
+        </div>
+        <div class="domain-card glass-card">
+          <div class="domain-icon pink"><i class="fa-solid fa-palette"></i></div>
+          <h3>UI/UX Design</h3>
+          <p>Figma, Adobe XD, Wireframing, Prototyping</p>
+        </div>
       </div>
     </div>
   </section>
@@ -118,13 +193,25 @@
   <section class="why-section">
     <div class="container">
       <div class="section-header">
-        <h2>Why Choose <span>Speedify Tech X?</span></h2>
+        <h2 class="section-title-gradient">Why Choose <span>Speedify Tech X?</span></h2>
         <p>We don't just teach. We prepare you for the real world.</p>
       </div>
       <div class="why-grid">
-        <div class="why-card"><div class="why-icon"><i class="fa-solid fa-diagram-project"></i></div><h3>Real-World Projects</h3><p>Stop building toy apps. Work on actual client projects, solve real problems, and build a portfolio that stands out to recruiters.</p></div>
-        <div class="why-card"><div class="why-icon"><i class="fa-solid fa-user-graduate"></i></div><h3>Expert Mentors</h3><p>Learn directly from industry veterans who have built scalable systems and worked at top tech companies.</p></div>
-        <div class="why-card"><div class="why-icon"><i class="fa-solid fa-award"></i></div><h3>Verified Certificate</h3><p>Earn a recognized certificate backed by partner organizations that recruiters actually value.</p></div>
+        <div class="why-card glass-card">
+          <div class="why-icon"><i class="fa-solid fa-diagram-project"></i></div>
+          <h3>Real-World Projects</h3>
+          <p>Stop building toy apps. Work on actual client projects, solve real problems, and build a portfolio that stands out to recruiters.</p>
+        </div>
+        <div class="why-card glass-card">
+          <div class="why-icon"><i class="fa-solid fa-user-graduate"></i></div>
+          <h3>Expert Mentors</h3>
+          <p>Learn directly from industry veterans who have built scalable systems and worked at top tech companies.</p>
+        </div>
+        <div class="why-card glass-card">
+          <div class="why-icon"><i class="fa-solid fa-award"></i></div>
+          <h3>Verified Certificate</h3>
+          <p>Earn a recognized certificate backed by partner organizations that recruiters actually value.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -132,10 +219,12 @@
   <!-- CTA SECTION -->
   <section class="cta-section">
     <div class="container">
-      <div class="cta-card">
+      <div class="cta-card glass-card">
         <h2>Ready to transform your career?</h2>
         <p>Ready to start your journey? Apply now and take the first step.</p>
-        <a href="index.html#apply" class="btn-cta-full">Start Your Application <i class="fa-solid fa-arrow-right"></i></a>
+        <div class="cta-btn-row">
+          <a href="index.html#apply" class="btn-cta-full">Start Your Application <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
       </div>
     </div>
   </section>
@@ -143,21 +232,23 @@
   <!-- CONTACT -->
   <section class="contact-section" id="contact">
     <div class="container">
-      <div class="section-header"><h2>Get In <span>Touch</span></h2></div>
+      <div class="section-header">
+        <h2 class="section-title-gradient">Get In <span>Touch</span></h2>
+      </div>
       <div class="contact-grid">
-        <div class="contact-card">
+        <div class="contact-card glass-card">
           <div class="contact-icon"><i class="fa-solid fa-envelope"></i></div>
           <h3>Email Us</h3>
           <p>Drop us a line anytime</p>
           <a href="mailto:speedifytechx@gmail.com" class="contact-link">speedifytechx@gmail.com</a>
         </div>
-        <div class="contact-card">
+        <div class="contact-card glass-card">
           <div class="contact-icon"><i class="fa-solid fa-phone"></i></div>
           <h3>Call Us</h3>
           <p>Mon-Fri from 9am to 6pm</p>
           <a href="tel:+918610535231" class="contact-link">+91 8610535231</a>
         </div>
-        <div class="contact-card insta-card">
+        <div class="contact-card glass-card insta-card">
           <div class="contact-icon"><i class="fa-brands fa-instagram"></i></div>
           <h3>Instagram</h3>
           <p>Follow us for updates</p>
@@ -179,16 +270,13 @@
           <p class="footer-brand-desc">Empowering the next generation of tech leaders through immersive, project-based internships.</p>
           <div class="footer-contact-list">
             <a href="mailto:speedifytechx@gmail.com" class="footer-contact-item footer-fade-in" style="animation-delay:0.1s">
-              <i class="fa-solid fa-envelope"></i>
-              <span>speedifytechx@gmail.com</span>
+              <i class="fa-solid fa-envelope"></i><span>speedifytechx@gmail.com</span>
             </a>
             <a href="tel:+918610535231" class="footer-contact-item footer-fade-in" style="animation-delay:0.2s">
-              <i class="fa-solid fa-phone"></i>
-              <span>+91 8610535231</span>
+              <i class="fa-solid fa-phone"></i><span>+91 8610535231</span>
             </a>
             <a href="https://speedifytechx.xyz/" target="_blank" rel="noopener noreferrer" class="footer-contact-item footer-contact-website footer-fade-in" style="animation-delay:0.3s">
-              <i class="fa-solid fa-globe"></i>
-              <span>speedifytechx.xyz</span>
+              <i class="fa-solid fa-globe"></i><span>speedifytechx.xyz</span>
             </a>
           </div>
           <div class="footer-socials">
@@ -228,6 +316,18 @@
   </button>
 
   <script>
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', e => {
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Scroll to top visibility
     window.addEventListener('scroll', () => {
       document.getElementById('scrollTop').style.opacity = window.scrollY > 300 ? '1' : '0';
     });
@@ -241,7 +341,6 @@
         const isOpen = mobileNavDrawer.classList.toggle('open');
         mobileNavIcon.className = isOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
       });
-      // Close drawer when a link is clicked
       mobileNavDrawer.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
           mobileNavDrawer.classList.remove('open');
@@ -249,6 +348,117 @@
         });
       });
     }
+
+    // Meteor Shower + Aurora background animation
+    (function initMeteorAurora() {
+      const canvas = document.getElementById('particles-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let W = canvas.width = window.innerWidth;
+      let H = canvas.height = window.innerHeight;
+
+      // Aurora wave layers
+      const auroraLayers = [
+        { color: '30,115,230',  amp: 0.09, freq: 0.0012, speed: 0.0004, phase: 0,   yBase: 0.35, alpha: 0.07 },
+        { color: '56,189,248',  amp: 0.07, freq: 0.0018, speed: 0.0006, phase: 2.1, yBase: 0.45, alpha: 0.05 },
+        { color: '96,165,250',  amp: 0.06, freq: 0.0009, speed: 0.0003, phase: 4.5, yBase: 0.28, alpha: 0.06 },
+        { color: '124,58,237',  amp: 0.05, freq: 0.0015, speed: 0.0005, phase: 1.3, yBase: 0.55, alpha: 0.04 },
+      ];
+
+      // Stars
+      const stars = Array.from({ length: 120 }, () => ({
+        x: Math.random() * W, y: Math.random() * H,
+        r: Math.random() * 1.2 + 0.2,
+        alpha: Math.random() * 0.6 + 0.1,
+        twinkleSpeed: Math.random() * 0.02 + 0.005,
+        twinkleOffset: Math.random() * Math.PI * 2,
+      }));
+
+      // Meteors
+      function spawnMeteor() {
+        return {
+          x: Math.random() * W * 1.5, y: -20,
+          len: Math.random() * 140 + 80,
+          speed: Math.random() * 6 + 5,
+          alpha: Math.random() * 0.6 + 0.3,
+          angle: Math.PI / 4 + (Math.random() - 0.5) * 0.3,
+          life: 1, decay: Math.random() * 0.018 + 0.012,
+          width: Math.random() * 1.5 + 0.5,
+          color: Math.random() > 0.5 ? '56,189,248' : '255,255,255',
+        };
+      }
+      const meteors = [];
+      let meteorTimer = 0;
+      let t = 0;
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        t++;
+        meteorTimer++;
+        if (meteorTimer > 40 + Math.random() * 80) {
+          meteors.push(spawnMeteor());
+          if (Math.random() > 0.65) meteors.push(spawnMeteor());
+          meteorTimer = 0;
+        }
+
+        // Aurora
+        auroraLayers.forEach(layer => {
+          layer.phase += layer.speed;
+          ctx.beginPath();
+          ctx.moveTo(0, H);
+          for (let x = 0; x <= W; x += 4) {
+            const y = H * layer.yBase + Math.sin(x * layer.freq + layer.phase) * H * layer.amp
+                    + Math.sin(x * layer.freq * 1.7 + layer.phase * 1.3) * H * layer.amp * 0.5;
+            ctx.lineTo(x, y);
+          }
+          ctx.lineTo(W, H); ctx.closePath();
+          const grad = ctx.createLinearGradient(0, 0, 0, H);
+          grad.addColorStop(0, `rgba(${layer.color},${layer.alpha})`);
+          grad.addColorStop(0.5, `rgba(${layer.color},${layer.alpha * 0.6})`);
+          grad.addColorStop(1, `rgba(${layer.color},0)`);
+          ctx.fillStyle = grad; ctx.fill();
+        });
+
+        // Stars
+        stars.forEach(s => {
+          const twinkle = 0.4 + 0.6 * Math.abs(Math.sin(t * s.twinkleSpeed + s.twinkleOffset));
+          ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(200,220,255,${s.alpha * twinkle})`; ctx.fill();
+        });
+
+        // Meteors
+        for (let i = meteors.length - 1; i >= 0; i--) {
+          const m = meteors[i];
+          m.x += Math.cos(m.angle) * m.speed;
+          m.y += Math.sin(m.angle) * m.speed;
+          m.life -= m.decay;
+          if (m.life <= 0) { meteors.splice(i, 1); continue; }
+          const tailX = m.x - Math.cos(m.angle) * m.len;
+          const tailY = m.y - Math.sin(m.angle) * m.len;
+          const grad = ctx.createLinearGradient(tailX, tailY, m.x, m.y);
+          grad.addColorStop(0, `rgba(${m.color},0)`);
+          grad.addColorStop(0.7, `rgba(${m.color},${m.alpha * m.life * 0.4})`);
+          grad.addColorStop(1, `rgba(${m.color},${m.alpha * m.life})`);
+          ctx.beginPath(); ctx.moveTo(tailX, tailY); ctx.lineTo(m.x, m.y);
+          ctx.strokeStyle = grad; ctx.lineWidth = m.width; ctx.lineCap = 'round'; ctx.stroke();
+          ctx.beginPath(); ctx.arc(m.x, m.y, m.width * 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${m.color},${m.alpha * m.life * 0.8})`; ctx.fill();
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+      window.addEventListener('resize', () => {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+        stars.forEach(s => { s.x = Math.random() * W; s.y = Math.random() * H; });
+      });
+    })();
+
+    // Intersection observer for scroll-reveal animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); observer.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.glass-card, .stat-card, .hero-float').forEach(el => observer.observe(el));
   </script>
 </body>
 </html>
