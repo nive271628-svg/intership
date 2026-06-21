@@ -12,12 +12,12 @@ const DEFAULT_STATE = {
   resources: [],
   payments: [],
   applications: [],
-  config: { firebase: null, sheetsWebhook: "https://script.google.com/macros/s/AKfycbz6Uvo2mIaYAN8EYGA44pFTQr-dspXs7HIMvJFQMGMUnrkB7p__pjfvhvGYILqlQf_u/exec" }
+  config: { firebase: null, sheetsWebhook: "https://script.google.com/macros/s/AKfycbxL0lUhMw5UOx0azhesvUEtwHp3TFienBW0Z_VLYXYR5kgwnRmhaESYcSFZjOK0C700jA/exec" }
 };
 
 // State and Session Init
 const STATE_VERSION = "5";
-const SHEETS_WEBHOOK = "https://script.google.com/macros/s/AKfycbz6Uvo2mIaYAN8EYGA44pFTQr-dspXs7HIMvJFQMGMUnrkB7p__pjfvhvGYILqlQf_u/exec";
+const SHEETS_WEBHOOK = "https://script.google.com/macros/s/AKfycbxL0lUhMw5UOx0azhesvUEtwHp3TFienBW0Z_VLYXYR5kgwnRmhaESYcSFZjOK0C700jA/exec";
 let appState = JSON.parse(localStorage.getItem('speedify_portal_state'));
 if (!appState) {
   // First ever load — seed defaults
@@ -131,22 +131,31 @@ const modalBody = document.getElementById('modal-body');
 const modalClose = document.getElementById('modal-close');
 
 function showModal(title, bodyHtml) {
+  const modalContainer = document.getElementById('modal-container');
+  const modalTitle     = document.getElementById('modal-title');
+  const modalBody      = document.getElementById('modal-body');
   if (!modalContainer) return;
   modalTitle.innerText = title;
   modalBody.innerHTML = bodyHtml;
   modalContainer.classList.add('active');
 }
 function closeModal() {
+  const modalContainer = document.getElementById('modal-container');
+  const modalBody      = document.getElementById('modal-body');
   if (!modalContainer) return;
   modalContainer.classList.remove('active');
-  const video = modalBody.querySelector('video');
+  const video = modalBody ? modalBody.querySelector('video') : null;
   if (video) video.pause();
 }
-// Expose to window for inline onclick handlers (needed with type="module")
+// Modal Managers — always do live DOM lookup to avoid stale references
 window.closeModal  = closeModal;
 window.showToast   = showToast;
-if (modalClose) modalClose.addEventListener('click', closeModal);
-if (modalContainer) { modalContainer.addEventListener('click', (e) => { if (e.target === modalContainer) closeModal(); }); }
+document.addEventListener('DOMContentLoaded', () => {
+  const modalClose = document.getElementById('modal-close');
+  const modalContainer = document.getElementById('modal-container');
+  if (modalClose) modalClose.addEventListener('click', closeModal);
+  if (modalContainer) modalContainer.addEventListener('click', (e) => { if (e.target === modalContainer) closeModal(); });
+});
 
 // --- ROUTER ---
 function initRouter() { window.addEventListener('hashchange', handleRoute); handleRoute(); }
@@ -251,10 +260,12 @@ function switchTab(tabId) {
   }
 }
 
-// Log Out
-document.getElementById('btn-logout').addEventListener('click', () => {
-  currentSession.currentUser = null; saveSession();
-  showToast("Logged out successfully.", "info"); navigateTo('#login');
+// Log Out — use event delegation so this works even when sidebar is hidden/not yet rendered
+document.addEventListener('click', (e) => {
+  if (e.target && e.target.closest('#btn-logout')) {
+    currentSession.currentUser = null; saveSession();
+    showToast("Logged out successfully.", "info"); navigateTo('#login');
+  }
 });
 
 // --- RENDERERS ---
@@ -283,7 +294,7 @@ function renderHomeView(container) {
       <div class="home-grid-bg"></div>
       <div class="home-hero-left">
         <div class="home-badge"><i class="fa-solid fa-rocket"></i> Shape your future with us</div>
-        <h1 class="home-title">Accelerate Your Career<br><span class="home-accent">with Speedify Tech X</span></h1>
+        <h1 class="home-title"><span class="home-title-gradient">Accelerate Your Career</span><br><span class="home-accent">with Speedify Tech X</span></h1>
         <p class="home-desc">Step into the world of tech with our elite internship program. Gain real-world experience, build a stellar portfolio, and land your dream job.</p>
         <div class="home-cta-row">
           <a href="#apply" onclick="navigateTo('#apply')" class="home-btn-primary">Create Account <i class="fa-solid fa-arrow-right"></i></a>
@@ -296,13 +307,35 @@ function renderHomeView(container) {
         </div>
       </div>
       <div class="home-hero-right">
-        <div class="home-logo-ring">
-          <div class="home-ring-anim"></div>
-          <div class="home-logo-card"><img src="logo.jpeg" alt="Speedify Tech X"></div>
+        <div class="home-dashboard-mockup">
+          <div class="mockup-topbar">
+            <div class="mockup-dots"><span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span></div>
+            <span class="mockup-title-bar">Intern Dashboard</span>
+            <div class="mockup-avatar"><i class="fa-solid fa-user"></i></div>
+          </div>
+          <div class="mockup-body">
+            <div class="mockup-stats-row">
+              <div class="mockup-stat-card"><i class="fa-solid fa-chart-line mockup-stat-icon cyan-icon"></i><div><div class="mockup-stat-val">95%</div><div class="mockup-stat-label">Progress</div></div></div>
+              <div class="mockup-stat-card"><i class="fa-solid fa-award mockup-stat-icon purple-icon"></i><div><div class="mockup-stat-val">12</div><div class="mockup-stat-label">Tasks Done</div></div></div>
+              <div class="mockup-stat-card"><i class="fa-solid fa-clock mockup-stat-icon green-icon"></i><div><div class="mockup-stat-val">32h</div><div class="mockup-stat-label">Hours</div></div></div>
+            </div>
+            <div class="mockup-progress-section">
+              <div class="mockup-progress-label"><span>Web Development</span><span class="mockup-percent">78%</span></div>
+              <div class="mockup-progress-track"><div class="mockup-progress-fill" style="width:78%;background:linear-gradient(90deg,#38bdf8,#1a6fd4)"></div></div>
+              <div class="mockup-progress-label"><span>React & Node.js</span><span class="mockup-percent">54%</span></div>
+              <div class="mockup-progress-track"><div class="mockup-progress-fill" style="width:54%;background:linear-gradient(90deg,#a78bfa,#7c3aed)"></div></div>
+              <div class="mockup-progress-label"><span>UI/UX Design</span><span class="mockup-percent">91%</span></div>
+              <div class="mockup-progress-track"><div class="mockup-progress-fill" style="width:91%;background:linear-gradient(90deg,#34d399,#059669)"></div></div>
+            </div>
+            <div class="mockup-badges-row">
+              <span class="mockup-badge badge-blue"><i class="fa-solid fa-code"></i> Day 14</span>
+              <span class="mockup-badge badge-green"><i class="fa-solid fa-circle-check"></i> On Track</span>
+              <span class="mockup-badge badge-purple"><i class="fa-solid fa-star"></i> Top Intern</span>
+            </div>
+          </div>
         </div>
         <div class="home-float home-float-tl"><i class="fa-solid fa-code-merge"></i><div><strong>Code Merged</strong><span>Just now</span></div></div>
         <div class="home-float home-float-br"><i class="fa-solid fa-certificate"></i><div><strong>Certified</strong><span>Top 1% Intern</span></div></div>
-        <div class="home-float home-float-bl"><i class="fa-solid fa-briefcase"></i><div><strong>Offer Received</strong><span>Tech Innovators Inc.</span></div></div>
       </div>
     </section>
 
@@ -319,7 +352,7 @@ function renderHomeView(container) {
 
     <!-- STATS -->
     <div class="home-stats">
-      <div class="home-stat"><span class="home-stat-num">500<sup>+</sup></span><span>Students Trained</span></div>
+      <div class="home-stat"><span class="home-stat-num">10<sup>+</sup></span><span>Students Trained</span></div>
       <div class="home-stat"><span class="home-stat-num">50<sup>+</sup></span><span>Partner Companies</span></div>
       <div class="home-stat"><span class="home-stat-num">95<sup>%</sup></span><span>Placement Rate</span></div>
       <div class="home-stat"><span class="home-stat-num">10<sup>+</sup></span><span>Tech Domains</span></div>
@@ -441,56 +474,142 @@ function renderHomeView(container) {
 
   </div>`;
 
-  // Particle background animation
-  (function initParticles() {
+  // Meteor Shower + Aurora background animation
+  (function initMeteorAurora() {
     const canvas = document.getElementById('home-particles-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     let W = canvas.width = window.innerWidth;
     let H = canvas.height = window.innerHeight;
-    const COLORS = ['rgba(30,115,230,', 'rgba(56,189,248,', 'rgba(96,165,250,'];
-    const particles = Array.from({ length: 70 }, () => ({
+
+    // --- AURORA WAVES ---
+    const auroraLayers = [
+      { color: '30,115,230',  amp: 0.09, freq: 0.0012, speed: 0.0004, phase: 0,    yBase: 0.35, alpha: 0.07 },
+      { color: '56,189,248',  amp: 0.07, freq: 0.0018, speed: 0.0006, phase: 2.1,  yBase: 0.45, alpha: 0.05 },
+      { color: '96,165,250',  amp: 0.06, freq: 0.0009, speed: 0.0003, phase: 4.5,  yBase: 0.28, alpha: 0.06 },
+      { color: '124,58,237',  amp: 0.05, freq: 0.0015, speed: 0.0005, phase: 1.3,  yBase: 0.55, alpha: 0.04 },
+    ];
+
+    // --- STARS ---
+    const stars = Array.from({ length: 120 }, () => ({
       x: Math.random() * W,
       y: Math.random() * H,
-      r: Math.random() * 2 + 0.5,
-      dx: (Math.random() - 0.5) * 0.4,
-      dy: (Math.random() - 0.5) * 0.4,
-      color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      alpha: Math.random() * 0.5 + 0.1
+      r: Math.random() * 1.2 + 0.2,
+      alpha: Math.random() * 0.6 + 0.1,
+      twinkleSpeed: Math.random() * 0.02 + 0.005,
+      twinkleOffset: Math.random() * Math.PI * 2,
     }));
+
+    // --- METEORS ---
+    function spawnMeteor() {
+      return {
+        x: Math.random() * W * 1.5,
+        y: -20,
+        len: Math.random() * 140 + 80,
+        speed: Math.random() * 6 + 5,
+        alpha: Math.random() * 0.6 + 0.3,
+        angle: Math.PI / 4 + (Math.random() - 0.5) * 0.3,
+        life: 1,
+        decay: Math.random() * 0.018 + 0.012,
+        width: Math.random() * 1.5 + 0.5,
+        color: Math.random() > 0.5 ? '56,189,248' : '255,255,255',
+      };
+    }
+    const meteors = [];
+    let meteorTimer = 0;
+
+    let t = 0;
     let animId;
+
+    function drawAurora() {
+      auroraLayers.forEach(layer => {
+        layer.phase += layer.speed;
+        ctx.beginPath();
+        ctx.moveTo(0, H);
+        for (let x = 0; x <= W; x += 4) {
+          const y = H * layer.yBase + Math.sin(x * layer.freq + layer.phase) * H * layer.amp
+                  + Math.sin(x * layer.freq * 1.7 + layer.phase * 1.3) * H * layer.amp * 0.5;
+          ctx.lineTo(x, y);
+        }
+        ctx.lineTo(W, H);
+        ctx.closePath();
+        const grad = ctx.createLinearGradient(0, 0, 0, H);
+        grad.addColorStop(0, `rgba(${layer.color},${layer.alpha})`);
+        grad.addColorStop(0.5, `rgba(${layer.color},${layer.alpha * 0.6})`);
+        grad.addColorStop(1, `rgba(${layer.color},0)`);
+        ctx.fillStyle = grad;
+        ctx.fill();
+      });
+    }
+
+    function drawStars() {
+      stars.forEach(s => {
+        const twinkle = 0.4 + 0.6 * Math.abs(Math.sin(t * s.twinkleSpeed + s.twinkleOffset));
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(200,220,255,${s.alpha * twinkle})`;
+        ctx.fill();
+      });
+    }
+
+    function drawMeteors() {
+      for (let i = meteors.length - 1; i >= 0; i--) {
+        const m = meteors[i];
+        const dx = Math.cos(m.angle) * m.speed;
+        const dy = Math.sin(m.angle) * m.speed;
+        m.x += dx; m.y += dy;
+        m.life -= m.decay;
+        if (m.life <= 0) { meteors.splice(i, 1); continue; }
+
+        const tailX = m.x - Math.cos(m.angle) * m.len;
+        const tailY = m.y - Math.sin(m.angle) * m.len;
+        const grad = ctx.createLinearGradient(tailX, tailY, m.x, m.y);
+        grad.addColorStop(0, `rgba(${m.color},0)`);
+        grad.addColorStop(0.7, `rgba(${m.color},${m.alpha * m.life * 0.4})`);
+        grad.addColorStop(1, `rgba(${m.color},${m.alpha * m.life})`);
+
+        ctx.beginPath();
+        ctx.moveTo(tailX, tailY);
+        ctx.lineTo(m.x, m.y);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = m.width;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        // Bright head glow
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, m.width * 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${m.color},${m.alpha * m.life * 0.8})`;
+        ctx.fill();
+      }
+    }
+
     function draw() {
       ctx.clearRect(0, 0, W, H);
-      particles.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = p.color + p.alpha + ')';
-        ctx.fill();
-        p.x += p.dx; p.y += p.dy;
-        if (p.x < 0 || p.x > W) p.dx *= -1;
-        if (p.y < 0 || p.y > H) p.dy *= -1;
-      });
-      // Draw connecting lines
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dist = Math.hypot(particles[i].x - particles[j].x, particles[i].y - particles[j].y);
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = 'rgba(30,115,230,' + (0.15 * (1 - dist / 120)) + ')';
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
+      t++;
+
+      // Spawn meteors at random intervals
+      meteorTimer++;
+      if (meteorTimer > 40 + Math.random() * 80) {
+        meteors.push(spawnMeteor());
+        if (Math.random() > 0.65) meteors.push(spawnMeteor()); // occasional double
+        meteorTimer = 0;
       }
+
+      drawAurora();
+      drawStars();
+      drawMeteors();
+
       animId = requestAnimationFrame(draw);
+      window._homeParticleAnim = animId;
     }
+
     draw();
     window._homeParticleAnim = animId;
     window.addEventListener('resize', () => {
       W = canvas.width = window.innerWidth;
       H = canvas.height = window.innerHeight;
+      stars.forEach(s => { s.x = Math.random() * W; s.y = Math.random() * H; });
     });
   })();
 }
@@ -680,13 +799,36 @@ function renderApplyView(container) {
     const webhookUrl = (appState.config && appState.config.sheetsWebhook) || SHEETS_WEBHOOK;
     if (webhookUrl) {
       try {
+        // POST with text/plain body — avoids CORS preflight, works reliably with Google Apps Script doPost
+        const payload = {
+          timestamp:  new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+          name:       appData.fullName,
+          email:      appData.email,
+          phone:      appData.phone,
+          city:       appData.city,
+          university: appData.university,
+          degree:     appData.degree,
+          year:       appData.yearOfStudy,
+          gradYear:   appData.gradYear,
+          domain:     appData.role,
+          mode:       appData.mode,
+          duration:   appData.duration,
+          whyJoin:    appData.whyJoin,
+          skills:     appData.skills,
+          status:     'Under Review',
+          id:         appData.id
+        };
+        // Try POST first (works with doPost in Apps Script)
         await fetch(webhookUrl, {
           method: 'POST',
           mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(appData)
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(payload)
         });
-        console.log('Sent to Google Sheets');
+        // Also fire GET as fallback (works with doGet in Apps Script)
+        const params = new URLSearchParams(payload);
+        await fetch(`${webhookUrl}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
+        console.log('✅ Sent to Google Sheets');
       } catch (err) {
         console.warn('Google Sheets webhook failed:', err);
       }
@@ -741,10 +883,6 @@ function renderLoginView(container) {
         <img src="logo.jpeg" alt="Speedify Logo" class="login-logo-img">
         <h2>Speedify Tech X</h2>
         <p>Internship Management Portal</p>
-        <span class="badge ${isFirebaseActive ? 'badge-approved' : 'badge-pending'}" style="font-size:8px;margin-top:6px;">
-          <i class="fa-solid ${isFirebaseActive ? 'fa-fire' : 'fa-database'}"></i>
-          ${isFirebaseActive ? 'Live Firebase Auth' : 'Local Mock Auth'}
-        </span>
       </div>
       <form id="form-login">
         <div class="form-group">
@@ -1984,7 +2122,7 @@ function renderStudentDashboard(container) {
     const completedTasks = myTasks.filter(t => t.status === 'completed').length;
     const approvedReports = myReports.filter(r => r.status === 'approved').length;
     const attendedDays = myAttendance.filter(a => a.status === 'present' || a.status === 'late').length;
-    const attPct = Math.round((attendedDays / 20) * 100);
+    const attPct = myAttendance.length > 0 ? Math.round((attendedDays / myAttendance.length) * 100) : 0;
     const el = (id) => document.getElementById(id);
     if (el('home-tasks-done')) el('home-tasks-done').innerText = completedTasks;
     if (el('home-reports-approved')) el('home-reports-approved').innerText = approvedReports;
@@ -2011,7 +2149,7 @@ function renderStudentDashboard(container) {
     const tasksRatio = document.getElementById('txt-tasks-ratio'); if (tasksRatio) tasksRatio.innerText = `Tasks Completed: ${completedTasks}/${totalTasks}`;
     const progressPercent = document.getElementById('txt-progress-percent'); if (progressPercent) progressPercent.innerText = `${progressPct}%`;
     const attendedDays = myAttendance.filter(a => a.status === 'present' || a.status === 'late').length;
-    const attPct = Math.round((attendedDays / 20) * 100);
+    const attPct = myAttendance.length > 0 ? Math.round((attendedDays / myAttendance.length) * 100) : 0;
     const txtAttPct = document.getElementById('txt-attendance-pct'); if (txtAttPct) txtAttPct.innerText = `${attPct}%`;
     const approvedCount = myReports.filter(r => r.status === 'approved').length;
     const txtApprCnt = document.getElementById('txt-approved-cnt'); if (txtApprCnt) txtApprCnt.innerText = approvedCount.toString();
@@ -2237,8 +2375,8 @@ function renderMentorDashboard(container) {
       <div class="spreadsheet-header-cell">Email Address</div>
       <div class="spreadsheet-header-cell" style="flex:0.8;">Role Preference</div>
       <div class="spreadsheet-header-cell">University</div>
-      <div class="spreadsheet-header-cell" style="flex:0.6;">Cohort</div>
-      <div class="spreadsheet-header-cell" style="flex:0.7;">Resume Link</div>
+      <div class="spreadsheet-header-cell" style="flex:0.6;">Degree / Year</div>
+      <div class="spreadsheet-header-cell" style="flex:0.7;">Phone</div>
       <div class="spreadsheet-header-cell" style="flex:0.5;">Status</div>
       <div class="spreadsheet-header-cell" style="flex:0.6;">Actions</div>
     </div>
@@ -2642,7 +2780,7 @@ function renderMentorDashboard(container) {
     if (!rowsBox) return;
     const apps = appState.applications;
     if (apps.length === 0) { rowsBox.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">No applications submitted yet.</div>`; return; }
-    rowsBox.innerHTML = apps.map(a => `<div class="spreadsheet-row" id="app-row-${a.id}"><div class="spreadsheet-cell" style="flex:0.8;"><code>${new Date(a.appliedAt).toLocaleDateString()}</code></div><div class="spreadsheet-cell"><strong>${a.fullName}</strong></div><div class="spreadsheet-cell">${a.email}</div><div class="spreadsheet-cell" style="flex:0.8;">${a.role}</div><div class="spreadsheet-cell">${a.university}</div><div class="spreadsheet-cell" style="flex:0.6;">${a.preferredCohort}</div><div class="spreadsheet-cell" style="flex:0.7;"><a href="${a.resumeLink}" target="_blank" style="color:var(--accent-cyan);text-decoration:none;"><i class="fa-solid fa-file-pdf"></i> Resume</a></div><div class="spreadsheet-cell" style="flex:0.5;"><span class="badge ${a.status === 'Approved' ? 'badge-approved' : (a.status === 'Rejected' ? 'badge-rejected' : 'badge-pending')}">${a.status}</span></div><div class="spreadsheet-cell" style="flex:0.6;display:flex;gap:6px;"><button class="btn btn-primary" style="padding:4px 6px;font-size:11px;background:var(--success);" onclick="reviewApplication('${a.id}','Approved')" title="Approve"><i class="fa-solid fa-check"></i></button><button class="btn btn-secondary" style="padding:4px 6px;font-size:11px;color:var(--danger);" onclick="reviewApplication('${a.id}','Rejected')" title="Reject"><i class="fa-solid fa-xmark"></i></button></div></div>`).join('');
+    rowsBox.innerHTML = apps.map(a => `<div class="spreadsheet-row" id="app-row-${a.id}"><div class="spreadsheet-cell" style="flex:0.8;"><code>${new Date(a.appliedAt).toLocaleDateString()}</code></div><div class="spreadsheet-cell"><strong>${a.fullName}</strong></div><div class="spreadsheet-cell">${a.email}</div><div class="spreadsheet-cell" style="flex:0.8;">${a.role}</div><div class="spreadsheet-cell">${a.university || '—'}</div><div class="spreadsheet-cell" style="flex:0.6;">${a.degree || a.yearOfStudy || '—'}</div><div class="spreadsheet-cell" style="flex:0.7;">${a.phone || '—'}</div><div class="spreadsheet-cell" style="flex:0.5;"><span class="badge ${a.status === 'Approved' ? 'badge-approved' : (a.status === 'Rejected' ? 'badge-rejected' : 'badge-pending')}">${a.status}</span></div><div class="spreadsheet-cell" style="flex:0.6;display:flex;gap:6px;"><button class="btn btn-primary" style="padding:4px 6px;font-size:11px;background:var(--success);" onclick="reviewApplication('${a.id}','Approved')" title="Approve"><i class="fa-solid fa-check"></i></button><button class="btn btn-secondary" style="padding:4px 6px;font-size:11px;color:var(--danger);" onclick="reviewApplication('${a.id}','Rejected')" title="Reject"><i class="fa-solid fa-xmark"></i></button></div></div>`).join('');
   }
 
   window.reviewApplication = function(appId, targetStatus) {
@@ -2655,7 +2793,7 @@ function renderMentorDashboard(container) {
         const alreadyExists = appState.users.some(u => u.email.toLowerCase() === appRecord.email.toLowerCase());
         if (!alreadyExists) {
           const cleanUsername = appRecord.fullName.replace(/\s+/g, '').toLowerCase() + Math.floor(Math.random() * 10);
-          appState.users.push({ id: generateId('usr'), username: cleanUsername, password: "password123", fullName: appRecord.fullName, role: "student", email: appRecord.email, cohort: appRecord.preferredCohort, university: appRecord.university, phone: appRecord.phone, joinedDate: new Date().toISOString().split('T')[0], hourlyRate: 15 });
+          appState.users.push({ id: generateId('usr'), username: cleanUsername, password: "password123", fullName: appRecord.fullName, role: "student", email: appRecord.email, cohort: appRecord.role || 'N/A', university: appRecord.university, phone: appRecord.phone, degree: appRecord.degree, yearOfStudy: appRecord.yearOfStudy, joinedDate: new Date().toISOString().split('T')[0], hourlyRate: 15 });
           saveState(); showToast(`Intern account created! User: ${cleanUsername} / Pass: password123`, "info");
           populateMentorStudents();
         }
@@ -2665,8 +2803,15 @@ function renderMentorDashboard(container) {
 
   document.getElementById('btn-download-applications-csv').addEventListener('click', () => {
     if (appState.applications.length === 0) { showToast("No applications to download.", "error"); return; }
-    const headers = ["Applicant Name","Email","Phone","Role Preference","University","Cohort","Resume Link","Status","Date Applied"];
-    const rows = appState.applications.map(a => [a.fullName,a.email,a.phone,a.role,a.university,a.preferredCohort,a.resumeLink,a.status,a.appliedAt]);
+    const headers = ["Applicant Name","Email","Phone","Role Preference","University","Degree","Year of Study","Grad Year","Mode","Duration","Status","Date Applied"];
+    const rows = appState.applications.map(a => [
+      `"${(a.fullName||'').replace(/"/g,'""')}"`,
+      a.email, a.phone, a.role,
+      `"${(a.university||'').replace(/"/g,'""')}"`,
+      `"${(a.degree||'').replace(/"/g,'""')}"`,
+      a.yearOfStudy, a.gradYear, a.mode, a.duration,
+      a.status, a.appliedAt
+    ]);
     downloadCSV([headers.join(','), ...rows.map(r => r.join(','))].join('\n'), "Speedify_Internship_Applications.csv");
   });
 
@@ -2758,7 +2903,8 @@ function renderMentorDashboard(container) {
     const totalStudents = getStudents().length;
     const pendingReportsCount = appState.reports.filter(r => r.status === 'pending').length;
     const totalCheckedInDays = appState.attendance.filter(a => a.status === 'present' || a.status === 'late').length;
-    const avgAttendancePct = (totalStudents * 20) > 0 ? Math.round((totalCheckedInDays / (totalStudents * 20)) * 100) : 0;
+    const totalLoggedDays = appState.attendance.length;
+    const avgAttendancePct = totalLoggedDays > 0 ? Math.round((totalCheckedInDays / totalLoggedDays) * 100) : 0;
     const totalTasks = appState.tasks.length;
     const tasksPct = totalTasks > 0 ? Math.round((appState.tasks.filter(t => t.status === 'completed').length / totalTasks) * 100) : 0;
     document.getElementById('m-total-students').innerText = totalStudents.toString();
