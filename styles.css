@@ -572,7 +572,7 @@ select.form-control { padding-left: 16px; }
   -webkit-text-fill-color: transparent;
   animation: hfFooterLinkShimmer 4s linear infinite;
 }
-.hf-footer-socials { display: flex; gap: 10px; margin-top: 4px; }
+.hf-footer-socials { display: flex; gap: 10px; margin-top: 4px; justify-content: flex-start; }
 .hf-footer-social-link {
   display: inline-flex;
   align-items: center;
@@ -609,7 +609,7 @@ select.form-control { padding-left: 16px; }
   .hf-footer-brand-desc { max-width: 100%; text-align: center; }
   .hf-footer-contact-list { align-items: center; width: 100%; }
   .hf-footer-contact-item { max-width: 320px; width: 100%; }
-  .hf-footer-socials { justify-content: center; width: 100%; }
+  .hf-footer-socials { justify-content: flex-start; width: 100%; }
   .hf-footer-bottom { flex-direction: column; text-align: center; }
 }
 
