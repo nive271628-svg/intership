@@ -380,8 +380,7 @@ function renderHomeView(container) {
     <!-- STATS -->
     <div class="home-stats">
       <div class="home-stat"><span class="home-stat-num">10<sup>+</sup></span><span>Students Trained</span></div>
-      <div class="home-stat"><span class="home-stat-num">50<sup>+</sup></span><span>Partner Companies</span></div>
-      <div class="home-stat"><span class="home-stat-num">95<sup>%</sup></span><span>Placement Rate</span></div>
+      <div class="home-stat"><span class="home-stat-num">5<sup>+</sup></span><span>Creative Minds</span></div>
       <div class="home-stat"><span class="home-stat-num">10<sup>+</sup></span><span>Tech Domains</span></div>
     </div>
 
